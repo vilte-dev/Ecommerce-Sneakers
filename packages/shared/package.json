@@ -1,0 +1,8 @@
+{
+  "name": "@sneakers/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.js", "./styles.css": "./src/styles.css" },
+  "dependencies": { "@supabase/supabase-js": "^2.45.0" }
+}
