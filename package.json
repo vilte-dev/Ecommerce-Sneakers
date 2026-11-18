@@ -1,0 +1,11 @@
+{
+  "name": "sneakers",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev:store": "npm run dev --workspace apps/store",
+    "dev:admin": "npm run dev --workspace apps/admin",
+    "build": "npm run build --workspaces --if-present"
+  }
+}
