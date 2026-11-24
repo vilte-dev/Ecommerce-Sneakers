@@ -1,0 +1,18 @@
+npm notice run sneakers@0.2.0 test
+npm notice run node --test "packages/shared/test/*.test.js"
+✔ normalizarCelular acepta celulares bolivianos de 8 dígitos y con prefijo 591 (1.9012ms)
+✔ normalizarCelular rechaza números inválidos (0.1634ms)
+✔ enlaceWhatsApp codifica el mensaje y devuelve null sin número válido (0.1157ms)
+✔ las plantillas usan solo el primer nombre y el número de pedido (0.2905ms)
+✔ estadoPedido distingue contra entrega por confirmar (0.1241ms)
+✔ pasosPedido marca el avance del pedido (0.6924ms)
+✔ tallas: límites de las categorías (RF-06) (0.1824ms)
+✔ mensajeError traduce errores y deja pasar los mensajes de negocio (0.2879ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77.6697

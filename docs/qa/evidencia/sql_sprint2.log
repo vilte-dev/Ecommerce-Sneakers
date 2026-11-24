@@ -1,0 +1,77 @@
+BEGIN
+CREATE SCHEMA
+GRANT
+CREATE TABLE
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+GRANT
+DO
+NOTICE:  ok  - no se puede pedir más que el stock (Solo hay 3 unidad(es) disponibles de la talla 42 de un producto de tu carrito.)
+NOTICE:  ok  - una talla fuera del rango de la categoría no se puede pedir (RF-06) (Solo hay 0 unidad(es) disponibles de la talla 38 de un producto de tu carrito.)
+NOTICE:  ok  - domicilio exige dirección de al menos 5 caracteres (Escribe la dirección de entrega en Tarija.)
+NOTICE:  ok  - domicilio exige celular válido (Ingresa un celular de contacto de 8 dígitos.)
+NOTICE:  ok  - no se crea un pedido con carrito vacío (Tu carrito está vacío.)
+NOTICE:  ok  - el total sale de los precios de la BD (3 × 100 = 300) y suma líneas repetidas
+NOTICE:  ok  - el pedido nace pendiente de pago
+NOTICE:  ok  - crear el pedido NO descuenta stock (RN-04)
+DO
+NOTICE:  ok  - otro cliente no ve el pedido de Ana
+NOTICE:  ok  - Ana ve su pedido
+NOTICE:  ok  - el cliente no puede modificar total ni estado de su pedido
+NOTICE:  ok  - el cliente no puede insertar pedidos directamente (new row violates row-level security policy for table "pedidos")
+NOTICE:  ok  - el cliente no puede confirmar pedidos (No tienes permiso para esta acción)
+DO
+NOTICE:  ok  - no se acepta un archivo de la carpeta de otro usuario (Archivo no válido.)
+NOTICE:  ok  - otro cliente no puede cargar comprobante a un pedido ajeno (No encontramos ese pedido.)
+NOTICE:  ok  - al cargar el comprobante el pedido pasa a en_revision
+NOTICE:  ok  - un nuevo comprobante reemplaza al anterior (solo uno pendiente)
+DO
+NOTICE:  ok  - el administrador no valida pagos (matriz de permisos) (No tienes permiso para esta acción)
+NOTICE:  ok  - rechazar exige motivo (Escribe el motivo del rechazo para que el cliente lo vea.)
+NOTICE:  ok  - tras el rechazo el cliente puede volver a subir un comprobante
+NOTICE:  ok  - el motivo queda guardado
+NOTICE:  ok  - no se valida un pedido sin comprobante (Solo se puede validar un pedido con comprobante cargado.)
+NOTICE:  ok  - el empleado ve el nombre del cliente del pedido
+NOTICE:  ok  - el pedido queda confirmado
+NOTICE:  ok  - el stock se descuenta al validar (3 − 3 = 0)
+NOTICE:  ok  - el comprobante queda validado
+NOTICE:  ok  - al llegar al mínimo se genera una alerta de stock (RF-12)
+NOTICE:  ok  - no se puede confirmar dos veces (Solo se puede validar un pedido con comprobante cargado.)
+DO
+NOTICE:  ok  - el segundo pedido por la última unidad se bloquea (Stock insuficiente: ya no quedan 1 unidad(es) de la talla 43 de este modelo.)
+NOTICE:  ok  - el pedido bloqueado queda sin confirmar
+NOTICE:  ok  - el stock nunca queda negativo
+NOTICE:  ok  - la BD rechaza stock negativo (new row for relation "stock" violates check constraint "stock_cantidad_check")
+NOTICE:  ok  - el cliente puede cancelar un pedido sin confirmar
+NOTICE:  ok  - un pedido confirmado no se cancela (Un pedido confirmado ya no se puede cancelar desde aquí. Comunícate con la tienda.)
+DO
+NOTICE:  ok  - no se entrega algo que no está listo (El pedido no está listo para retiro.)
+NOTICE:  ok  - retiro: pagado → listo para retiro → entregado
+DO
+NOTICE:  ok  - el pedido guarda el pago contra entrega elegido
+NOTICE:  ok  - no se despacha un pedido sin confirmar (El pedido debe estar confirmado antes de despacharlo.)
+NOTICE:  ok  - contra entrega: el stock se descuenta al confirmar el pedido (H-03)
+NOTICE:  ok  - asignar repartidor deja el pedido en despacho
+NOTICE:  ok  - no_entregado exige motivo (Escribe el motivo por el que no se entregó.)
+NOTICE:  ok  - una entrega registrada no se modifica (La entrega ya fue registrada.)
+NOTICE:  ok  - entregado cierra el pedido
+NOTICE:  ok  - el historial guarda cada cambio con usuario y fecha (5 registros)
+NOTICE:  ok  - cada cambio del historial tiene usuario
+DO
+NOTICE:  ok  - sin cuentas ni QR no se puede pagar por adelantado (El negocio aún no configuró sus datos de pago. Inténtalo más tarde.)
+NOTICE:  ok  - el cliente solo ve cuentas activas
+NOTICE:  ok  - con cuenta activa el cliente la ve
+NOTICE:  ok  - el cliente no puede editar las cuentas de pago
+DO
+NOTICE:  ok  - el empleado no ve el resumen ejecutivo (RN-08) (No tienes permiso para esta acción)
+NOTICE:  ok  - el empleado no lee compras ni inversión
+NOTICE:  ok  - el administrador tampoco ve el resumen ejecutivo (H-08) (No tienes permiso para esta acción)
+NOTICE:  ok  - el administrador no lee pedidos
+NOTICE:  ok  - el dueño ve las ventas confirmadas del periodo (300 + 100 + 200)
+NOTICE:  ok  - anon no puede ejecutar crear_pedido
+NOTICE:  ok  - nadie llama directo a la función interna de stock
+DO
+ROLLBACK
