@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { GERENCIA, STAFF } from '@sneakers/shared';
+import { GERENCIA, OPERADORES, ROLES, STAFF } from '@sneakers/shared';
 import RequireRole from './components/RequireRole.jsx';
 import Shell from './components/Shell.jsx';
 import Proximamente from './components/Proximamente.jsx';
@@ -11,6 +11,10 @@ import ModeloForm from './pages/ModeloForm.jsx';
 import Marcas from './pages/Marcas.jsx';
 import Inventario from './pages/Inventario.jsx';
 import Usuarios from './pages/Usuarios.jsx';
+import Pedidos from './pages/Pedidos.jsx';
+import PedidoInterno from './pages/PedidoInterno.jsx';
+import Pagos from './pages/Pagos.jsx';
+import Resumen from './pages/Resumen.jsx';
 
 export default function App() {
   return (
@@ -26,6 +30,14 @@ export default function App() {
             <Route path="modelos/:id" element={<ModeloForm />} />
             <Route path="marcas" element={<Marcas />} />
             <Route path="usuarios" element={<Usuarios />} />
+            <Route path="pagos" element={<Pagos />} />
+          </Route>
+          <Route element={<RequireRole roles={OPERADORES} />}>
+            <Route path="pedidos" element={<Pedidos />} />
+            <Route path="pedidos/:id" element={<PedidoInterno />} />
+          </Route>
+          <Route element={<RequireRole roles={[ROLES.DUENO]} />}>
+            <Route path="resumen" element={<Resumen />} />
           </Route>
           {/* Módulos de sprints futuros: la ruta, el rol y la pantalla ya existen. */}
           {MODULOS.filter((m) => m.sprint).map((m) => (

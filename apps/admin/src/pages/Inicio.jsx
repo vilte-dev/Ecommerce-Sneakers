@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GERENCIA } from '@sneakers/shared';
+import { GERENCIA, OPERADORES } from '@sneakers/shared';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../features/auth/AuthContext.jsx';
+import { contarPorValidar } from '../features/pedidos/api.js';
 
 export default function Inicio() {
   const { perfil, rol } = useAuth();
   const [kpi, setKpi] = useState(null);
+  const [porValidar, setPorValidar] = useState(null);
   const [error, setError] = useState(false);
+  const opera = OPERADORES.includes(rol);
 
   useEffect(() => {
     Promise.all([
@@ -22,23 +25,26 @@ export default function Inicio() {
         bajas: s.data.filter((r) => r.cantidad > 0 && r.cantidad <= r.umbral_minimo).length,
       });
     });
-  }, []);
+    if (opera) contarPorValidar().then(setPorValidar).catch(() => {});
+  }, [opera]);
+
+  const tarjetas = [['Modelos activos', kpi?.modelos], ['Unidades en stock', kpi?.unidades], ['Tallas con stock bajo', kpi?.bajas], ['Tallas agotadas', kpi?.agotadas]];
+  if (opera) tarjetas.unshift(['Pedidos web por validar', porValidar]);
 
   return (
     <div className="pila">
       <h1 style={{ fontSize: '2rem' }}>Hola, {perfil?.nombre?.split(' ')[0]}</h1>
       {error && <p className="aviso aviso--error">No se pudo cargar el resumen.</p>}
       <div className="indicadores">
-        {[['Modelos activos', kpi?.modelos], ['Unidades en stock', kpi?.unidades], ['Tallas con stock bajo', kpi?.bajas], ['Tallas agotadas', kpi?.agotadas]].map(([t, v]) => (
+        {tarjetas.map(([t, v]) => (
           <div key={t} className="tarjeta indicador"><span className="tenue chico">{t}</span><strong>{v ?? '–'}</strong></div>
         ))}
       </div>
-      {GERENCIA.includes(rol) && (
-        <div className="fila">
-          <Link className="btn btn--primario" to="/modelos/nuevo">Nuevo modelo</Link>
-          <Link className="btn" to="/inventario">Ver inventario</Link>
-        </div>
-      )}
+      <div className="fila">
+        {opera && <Link className="btn btn--primario" to="/pedidos">Ver pedidos web</Link>}
+        {GERENCIA.includes(rol) && <Link className="btn btn--primario" to="/modelos/nuevo">Nuevo modelo</Link>}
+        <Link className="btn" to="/inventario">Ver inventario</Link>
+      </div>
     </div>
   );
 }
