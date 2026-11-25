@@ -25,3 +25,8 @@ cross join lateral generate_series(
   case c.nombre when 'Niño' then 28 else c.talla_min end,
   case c.nombre when 'Adulto' then 45 else c.talla_max end
 ) as gs(talla);
+
+-- Sprint 2 · datos de pago y repartidor FICTICIOS para probar el flujo (reemplazar con los reales del negocio).
+insert into public.cuentas_pago (banco, titular, numero, tipo) values
+  ('Banco Ejemplo', 'Sneakers Tarija (ficticio)', '1000-000000-1', 'Caja de ahorro');
+insert into public.repartidores (nombre, telefono) values ('Moto Express Tarija (ficticio)', '70000000');

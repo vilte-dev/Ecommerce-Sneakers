@@ -20,9 +20,10 @@ export default function Carrito() {
 
   if (items.length === 0) {
     return (
-      <div className="pila" style={{ maxWidth: 480 }}>
-        <h1 style={{ fontSize: '2rem' }}>Tu carrito está vacío</h1>
-        <p className="tenue">Elige un modelo y tu talla para empezar.</p>
+      <div className="vacio">
+        <span className="vacio__num" aria-hidden="true">0</span>
+        <h1 style={{ fontSize: '2rem', margin: 0 }}>Tu carrito está vacío</h1>
+        <p className="tenue">Cero pares por ahora. Elige un modelo y tu talla para empezar.</p>
         <Link className="btn btn--primario" to="/catalogo">Ver el catálogo</Link>
       </div>
     );
@@ -30,6 +31,7 @@ export default function Carrito() {
 
   return (
     <div style={{ maxWidth: 760 }}>
+      <p className="sobretitulo">Sneakers · Tarija</p>
       <h1 style={{ fontSize: '2rem' }}>Tu carrito</h1>
       <div>
         {items.map((i) => (
