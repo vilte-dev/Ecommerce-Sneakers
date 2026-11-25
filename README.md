@@ -2,9 +2,12 @@
 
 > Proyecto académico universitario aplicado a **Sneakers**, un negocio real de calzado en la ciudad de Tarija, Bolivia.
 
-![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
+![Estado](https://img.shields.io/badge/estado-Sprint%203%20completado-yellow)
+![Versión](https://img.shields.io/badge/versi%C3%B3n-0.3.1-informational)
 ![Tipo](https://img.shields.io/badge/tipo-proyecto%20acad%C3%A9mico-blue)
-![Documentaci%C3%B3n](https://img.shields.io/badge/docs-ISO%2FIEC%2FIEEE%2029148-green)
+![Documentación](https://img.shields.io/badge/docs-ISO%2FIEC%2FIEEE%2029148-green)
+
+🔗 **Seguimiento del proyecto (Jira):** [Tablero SNEAK — Backlog](https://samuelvilte64.atlassian.net/jira/software/projects/SNEAK/boards/3/backlog)
 
 ---
 
@@ -12,22 +15,25 @@
 
 1. [Introducción y contexto del negocio](#1-introducción-y-contexto-del-negocio)
 2. [Equipo del proyecto](#2-equipo-del-proyecto)
-3. [Marco normativo y restricciones de diseño](#3-marco-normativo-y-restricciones-de-diseño)
-4. [Actores del sistema](#4-actores-del-sistema)
-5. [Requerimientos funcionales](#5-requerimientos-funcionales-rf)
-6. [Requerimientos no funcionales](#6-requerimientos-no-funcionales-rnf)
-7. [Tecnologías](#7-tecnologías)
-8. [Estructura del repositorio](#8-estructura-del-repositorio)
-9. [Instalación y ejecución](#9-instalación-y-ejecución)
-10. [Hoja de ruta](#10-hoja-de-ruta)
-11. [Uso académico](#11-uso-académico)
-12. [Escalabilidad futura](#12-escalabilidad-futura)
+3. [Metodología y seguimiento](#3-metodología-y-seguimiento)
+4. [Marco normativo y restricciones de diseño](#4-marco-normativo-y-restricciones-de-diseño)
+5. [Actores del sistema](#5-actores-del-sistema)
+6. [Requerimientos funcionales y su avance](#6-requerimientos-funcionales-rf-y-su-avance)
+7. [Requerimientos no funcionales y su avance](#7-requerimientos-no-funcionales-rnf-y-su-avance)
+8. [Tecnologías](#8-tecnologías)
+9. [Estructura del repositorio](#9-estructura-del-repositorio)
+10. [Instalación y ejecución](#10-instalación-y-ejecución)
+11. [Pruebas](#11-pruebas)
+12. [Hoja de ruta por sprint](#12-hoja-de-ruta-por-sprint)
+13. [Decisiones de diseño](#13-decisiones-de-diseño)
+14. [Uso académico](#14-uso-académico)
+15. [Escalabilidad futura](#15-escalabilidad-futura)
 
 ---
 
 ## 1. Introducción y contexto del negocio
 
-El presente proyecto comprende el diseño y desarrollo de una plataforma informática para la gestión comercial de **Sneakers**, un negocio de calzado ubicado en la ciudad de Tarija. El modelo operativo actual del negocio se caracteriza por una estructura compacta y eficiente:
+El presente proyecto comprende el diseño y desarrollo de una plataforma informática para la gestión comercial de **Sneakers**, un negocio de calzado ubicado en la ciudad de Tarija.
 
 | Componente | Descripción |
 |---|---|
@@ -35,7 +41,7 @@ El presente proyecto comprende el diseño y desarrollo de una plataforma inform�
 | **Capital humano** | Un (1) operario multifuncional, encargado tanto de la atención presencial como de la preparación de despachos digitales. |
 | **Nivel directivo** | El Dueño/Socio del negocio, responsable de la supervisión, análisis financiero y toma de decisiones operativas. |
 
-La solución tecnológica integra un canal de comercio electrónico (**E-commerce**) y un sistema interno de gestión para:
+La solución integra un canal de comercio electrónico (**E-commerce**) y un sistema interno de gestión para:
 
 - Centralizar el control de inventarios.
 - Automatizar los flujos de trabajo omnicanal.
@@ -49,33 +55,35 @@ La solución tecnológica integra un canal de comercio electrónico (**E-commerc
 - Pedidos con pago offline (transferencia o QR) y validación manual del comprobante.
 - Despacho a domicilio en Tarija o retiro en tienda.
 - Control de inventario con alertas de stock mínimo.
-- Punto de venta (POS), comprobante de venta y cierre de caja diario.
-- Programa de fidelidad por volumen de compras.
-- Paneles analíticos para el dueño: tendencias estacionales, rotación, retorno de inversión y simulador presupuestario.
+- Punto de venta (POS), comprobante de venta no fiscal y cierre de caja diario.
+- Programa de fidelidad por volumen de compras (5 % tras la 10.ª compra).
+- Paneles analíticos para el dueño: tendencias estacionales, rotación, retorno de inversión y simulador presupuestario *(Sprint 4)*.
 
 **El sistema NO incluye:**
 
 - Facturación electrónica ni integración con el Servicio de Impuestos Nacionales (SIN).
 - Pasarela de pagos en línea: el pago es offline y lo valida manualmente el empleado.
-- Procesamiento de pagos con tarjeta: el sistema solo registra la venta, no se conecta con terminales bancarias.
+- Procesamiento de pagos con tarjeta: **en caja solo se cobra con efectivo o QR**; el QR únicamente se registra (migración `0007_solo_efectivo_qr.sql`).
 - Envío automático de mensajes por WhatsApp: el empleado envía la plantilla mediante un botón.
 - Integración con el servicio de motomandados: solo se registra el repartidor y el estado del despacho.
 - Envíos fuera de la ciudad de Tarija.
 - Aplicación móvil nativa: la tienda es web y mobile-first.
 - Contabilidad completa, planillas ni gestión de recursos humanos.
-- Gestión de múltiples sucursales ni de productos distintos al calzado (ver [Escalabilidad futura](#12-escalabilidad-futura)).
+- Gestión de múltiples sucursales ni de productos distintos al calzado (ver [Escalabilidad futura](#15-escalabilidad-futura)).
 
 ---
 
 ## 2. Equipo del proyecto
 
-| Integrante | Rol en el proyecto | Correo |
+| Integrante | Rol en el proyecto (según el plan en Jira) | Correo |
 |---|---|---|
-| Romeo Lancelot Chavez Cuellar | Base de datos, seguridad y roles (líder técnico) | tj.romeo.chavez.c@upds.net.bo |
-| Pablo Cesar Maigua Ortiz | Tienda virtual: catálogo, tallas y carrito | pcmaiguaortiz@gmail.com |
-| Samuel Narciso Vilte Tarraga | Pedidos, comprobantes de pago y entregas | samuelvilte64@gmail.com |
-| Manuel Ignacio Aramayo Hoyos | Inventario y punto de venta (POS) | aramayomanuel2@gmail.com |
-| Rodrigo Sebastián Guerrero Riera | Fidelización y analítica del negocio | guerrerorierarodrigosebastian@gmail.com |
+| Romeo Lancelot Chavez Cuellar | Catálogo interno (modelos, variantes, imágenes), inventario, alertas de stock, caja congelada sin conexión | tj.romeo.chavez.c@upds.net.bo |
+| Pablo Cesar Maigua Ortiz | Product Owner / producto: matriz de permisos, wireframes, términos y devoluciones (Ley 453), demo y aceptación | pcmaiguaortiz@gmail.com |
+| Samuel Narciso Vilte Tarraga | Tienda virtual, pedidos y pagos offline, despacho, POS, comprobantes y analítica | samuelvilte64@gmail.com |
+| Manuel Ignacio Aramayo Hoyos | Base de datos, Auth, roles y RLS, Storage, stock y fidelidad, despliegue | aramayomanuel2@gmail.com |
+| Rodrigo Sebastián Guerrero Riera | Calidad (QA): plan de pruebas, CI y revisión de Definition of Done | guerrerorierarodrigosebastian@gmail.com |
+
+> ⚠️ El reparto original (README v1) asignaba módulos por requerimiento; el plan vigente es el de Jira, donde cada historia indica sus responsables. Confirmar esta tabla con el equipo.
 
 **Información académica**
 
@@ -87,212 +95,176 @@ La solución tecnológica integra un canal de comercio electrónico (**E-commerc
 
 ---
 
-## 3. Marco normativo y restricciones de diseño
+## 3. Metodología y seguimiento
 
-Para garantizar el cumplimiento legal y los estándares internacionales de ingeniería de software exigidos en el ámbito universitario, el sistema se rige bajo los siguientes marcos.
+El trabajo se organiza con **Scrum** y se sigue en Jira:
 
-### 3.1 Normativa legal y regulatoria (Bolivia)
+🔗 **[Tablero y backlog del proyecto (clave SNEAK)](https://samuelvilte64.atlassian.net/jira/software/projects/SNEAK/boards/3/backlog)**
+
+| Elemento | Cómo se usa |
+|---|---|
+| **Historias de usuario (HU)** | `HU-01` a `HU-24`, cada una con requerimientos del SRS, prioridad MoSCoW y criterios de aceptación Dado / Cuando / Entonces. |
+| **Historias de mejora visual** | `HU-UI-01` a `HU-UI-12` (etiqueta `ui`), presentación sin cambios de reglas de negocio. Detalle en `docs/hu-ui-sprint3.md`. |
+| **Sub-tareas / tareas** | `T01`–`T34`, con responsable y horas estimadas. |
+| **Etiquetas** | `sprint-N`, `resp-<nombre>`, `ui`, `calidad`, `producto`. |
+| **Definition of Done** | PR revisado por otro integrante; QA aprobado por Rodrigo; integrado en `develop` sin conflictos; cumple los RNF aplicables; documentación actualizada; aceptada por el PO en la Sprint Review. |
+
+### Flujo de trabajo con Git
+
+- Ramas `main` (estable, protegida), `develop` (integración) y ramas cortas por tarea con el ID de la historia, por ejemplo `feature/HU-15-pos`.
+- Pull request con al menos una revisión de otro integrante antes de mezclar.
+- Todo cambio en la base de datos se registra como migración en `supabase/migrations`.
+- Cada sprint deja su documento en `docs/` y su entrada en `CHANGELOG.md`.
+
+---
+
+## 4. Marco normativo y restricciones de diseño
+
+### 4.1 Normativa legal y regulatoria (Bolivia)
 
 | Norma | Aplicación en el proyecto |
 |---|---|
-| **Ley Nº 164** (Ley General de Telecomunicaciones, Tecnologías de Información y Comunicación) | Valida legalmente la celebración de transacciones mediante comercio electrónico y el uso del carrito de compras en el territorio boliviano. |
-| **Código de Comercio de Bolivia** (Artículos sobre Contabilidad y Libros de Comercio) | Regula la obligatoriedad de registrar los ingresos de forma cronológica, justificando el diseño de los cierres de caja y el almacenamiento seguro del historial de transacciones para auditorías. |
-| **Ley Nº 453** (Ley General de los Derechos de las Usuarias y los Usuarios y de las Consumidoras y los Consumidores) | Exige total transparencia en la visualización de precios en moneda nacional (Bolivianos - Bs.), además de la inclusión explícita de términos de servicio y políticas claras para cambios de calzado o devoluciones. |
-| **Constitución Política del Estado (Art. 130 – Acción de Protección de Privacidad)** | Respalda el cuidado de los datos personales de los clientes (correo, WhatsApp, CI o celular) que el sistema registra, justificando el cifrado de credenciales y el control de accesos por rol. |
-| **Decreto Supremo Nº 1793** (Reglamento de la Ley Nº 164) | Complementa la Ley 164 y constituye el marco general de protección de datos personales en el ámbito de las TIC. |
+| **Ley Nº 164** (Ley General de Telecomunicaciones, TIC) | Valida legalmente la celebración de transacciones mediante comercio electrónico y el uso del carrito de compras. |
+| **Código de Comercio de Bolivia** | Obliga a registrar los ingresos de forma cronológica: justifica los cierres de caja y que ventas, comprobantes y cierres sean **inalterables** (solo se anulan con motivo). |
+| **Ley Nº 453** (Derechos de las usuarias, usuarios, consumidoras y consumidores) | Precios en Bolivianos (Bs.) y términos de servicio y política de cambios y devoluciones (página `/terminos`). |
+| **Constitución Política del Estado (Art. 130)** | Cuidado de datos personales: control de accesos por rol y contraseñas con hash. |
+| **Decreto Supremo Nº 1793** | Reglamento de la Ley 164; marco de protección de datos personales en TIC. |
 
-### 3.2 Estándares tecnológicos y de calidad de software
+### 4.2 Estándares tecnológicos y de calidad de software
 
 | Estándar | Aplicación en el proyecto |
 |---|---|
-| **ISO/IEC/IEEE 29148** (sucesora de IEEE 830) | Estructura metodológica empleada para la elaboración del documento de requerimientos, asegurando la correcta separación y especificación de requerimientos funcionales y no funcionales. |
-| **ISO/IEC 25010** (Quality Product Model) | Marco de referencia para establecer los parámetros de calidad del software, con énfasis en eficiencia de desempeño (tiempos de carga), seguridad (cifrado de datos), usabilidad (diseño responsive) y fiabilidad. |
-| **ISO 9407** (Shoe sizes – Mondopoint system) | Referencia conceptual para estructurar de manera organizada la matriz de tallas en la base de datos (Niño, Juvenil, Adulto). |
+| **ISO/IEC/IEEE 29148** | Estructura del documento de requisitos (SRS). |
+| **ISO/IEC 25010** | Calidad: desempeño, seguridad, usabilidad (responsive, accesibilidad) y fiabilidad. |
+| **ISO 9407** (Mondopoint) | Referencia para la matriz de tallas (Niño, Juvenil, Adulto). |
 
 ---
 
-## 4. Actores del sistema
-
-Se han definido cuatro (4) actores clave con responsabilidades y niveles de acceso diferenciados para mitigar la sobrecarga operativa de la empresa:
+## 5. Actores del sistema
 
 | # | Actor | Descripción |
 |---|---|---|
-| 1 | **Cliente** (Comprador Omnicanal) | Actor externo que interactúa de manera pública con el e-commerce. Consulta el catálogo unificado de calzados, realiza reservas, simula pedidos, adjunta comprobantes y hace el seguimiento de sus entregas en Tarija. |
-| 2 | **Empleado / Vendedor** (Atención y Gestión Operativa) | Actor interno encargado del día a día de la sucursal. Registra ventas directas en la caja física, realiza cierres de caja y valida manualmente los pedidos de la web tras verificar los fondos bancarios. |
-| 3 | **Dueño** (Monitoreo y Soporte Ocasional) | Actor interno de nivel estratégico. Tiene acceso prioritario a paneles analíticos avanzados, gráficos estacionales y de rentabilidad. Posee permisos extendidos para realizar ventas en caja de manera eventual si la demanda de la tienda física así lo requiere. |
-| 4 | **Administrador del Sistema** (Gestión de Catálogo e Inventario) | Actor interno responsable del mantenimiento del sistema. Gestiona el catálogo de calzados (alta de modelos, carga de fotos, precios), define los parámetros técnicos del stock mínimo y monitorea la salud técnica de la aplicación. Este rol puede ser asumido por el Dueño o un empleado delegado. |
+| 1 | **Cliente** | Consulta el catálogo, arma el carrito, confirma pedidos, sube el comprobante y sigue su entrega. |
+| 2 | **Empleado / Vendedor** | Vende en caja (POS), valida comprobantes, gestiona despachos, hace el cierre de caja. Solo ve sus propias ventas y cierres. |
+| 3 | **Dueño** | Acceso a paneles ejecutivos (Resumen ejecutivo, y en Sprint 4 los analíticos). Puede operar caja y pedidos. |
+| 4 | **Administrador del sistema** | Gestiona catálogo, marcas, usuarios, datos de pago y alertas de stock. **No valida pagos** (matriz de permisos B.3 del SRS). |
 
 ---
 
-## 5. Requerimientos funcionales (RF)
+## 6. Requerimientos funcionales (RF) y su avance
 
-### 5.1 Gestión de usuarios, accesos y roles
+Resumen de los RF de alcance y su estado a la fecha (**Sprint 3 completado**). El detalle de cada RF está en el SRS.
 
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-01** | Autenticación de Clientes | Permitir al cliente registrarse, iniciar sesión y recuperar su contraseña a través de credenciales digitales asociadas a su correo o WhatsApp. |
-| **RF-02** | Interfaz de Operarios | Permitir a los empleados autenticarse de forma segura en sus terminales físicas para registrar transacciones directas y alterar estados de órdenes web. |
-| **RF-03** | Acceso Ejecutivo | Proveer al dueño un módulo exclusivo de visualización de métricas financieras, auditorías operativas y resúmenes consolidados en tiempo real. |
-| **RF-04** | Gestión de Configuración | Permitir al Administrador dar de alta, modificar o eliminar registros de calzados, sucursales, usuarios del sistema y marcas del catálogo. |
+| Grupo | RF | Historia(s) | Estado |
+|---|---|---|---|
+| Usuarios y roles | RF-01 Autenticación de clientes | HU-02 | ✅ Sprint 1 |
+| | RF-02 Interfaz de operarios | HU-03, HU-11 | ✅ Sprint 2 |
+| | RF-03 Acceso ejecutivo | HU-03 | ✅ Resumen ejecutivo (se amplía en Sprint 4) |
+| | RF-04 Gestión de configuración | HU-04 | ✅ Modelos, marcas y usuarios |
+| Catálogo | RF-05 Catálogo dinámico | HU-05 | ✅ Sprint 1 |
+| | RF-06 Validación de tallas (Niño 20–34, Juvenil 35–39, Adulto 40+) | HU-06 | ✅ Sprint 1 (UI y BD) |
+| | RF-07 Carrito | HU-07 | ✅ Sprint 1 |
+| Pedidos | RF-08 Instrucciones de pago offline | HU-09 | ✅ Sprint 2 |
+| | RF-09 Carga de comprobante | HU-10 | ✅ Sprint 2 |
+| | RF-10 Parámetros de despacho | HU-08 | ✅ Sprint 2 |
+| Inventario | RF-11 Visibilidad de stock | HU-04, HU-13 | ✅ Sprint 1–2 |
+| | RF-12 Sincronización automática | HU-11 | ✅ Sprint 2 |
+| | RF-14 Alerta de stock mínimo | HU-14 | ✅ Sprint 3 (panel interno) |
+| POS y entregas | RF-15 Terminal de venta en caja | HU-15 | ✅ Sprint 3 (efectivo o QR) |
+| | RF-18 Comprobante de venta no fiscal | HU-16 | ✅ Sprint 3 |
+| | RF-19 Cierre de caja diario | HU-17 | ✅ Sprint 3 |
+| | RF-20 Control de entrega local | HU-12 | ✅ Sprint 2 |
+| Fidelización y analítica | RF-21 Fidelidad por volumen | HU-18 | ✅ Sprint 3 |
+| | RF-22 Enlace a WhatsApp | HU-12 | ✅ Sprint 2 |
+| | RF-23 Tendencia estacional | HU-19 | ⏳ Sprint 4 |
+| | RF-24 Predicción de abastecimiento | HU-22 | ⏳ Sprint 4 |
+| | RF-25 Retorno de inversión | HU-20 | ⏳ Sprint 4 |
+| | RF-26 Rotación de inventario | HU-21 | ⏳ Sprint 4 |
+| | RF-27 Simulador presupuestario | HU-22 | ⏳ Sprint 4 |
 
-### 5.2 Catálogo de calzado y reglas de negocio para tallas
+Fuera de alcance (se conserva la numeración del SRS): RF-13 (traspasos), RF-16 (factura simulada) y RF-17 (datos fiscales).
 
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-05** | Catálogo Dinámico | Desplegar el inventario de calzados mediante filtros rápidos por género/categoría, marca, color, precio y disponibilidad de stock real. |
-| **RF-06** | Validación Estricta de Tallas | Restringir el ingreso y visualización de tallas de acuerdo con la categoría paramétrica del calzado (ver tabla siguiente). |
-| **RF-07** | Gestión de Carrito | Permitir la acumulación de productos en un carrito virtual de compras, la edición de volúmenes por ítem y el desglose de costos antes de confirmar el pedido. |
-
-**Regla de negocio de tallas (RF-06):**
-
-| Categoría | Rango de tallas admitido |
-|---|---|
-| **Niño** | Única y exclusivamente del **20 al 34** |
-| **Juvenil** | Única y exclusivamente del **35 al 39** |
-| **Adulto** | Única y exclusivamente del **40 en adelante** |
-
-### 5.3 Flujo de pedidos y modelo de transacción simplificado (Vía Rápida)
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-08** | Instrucciones de Pago Offline | Presentar al cliente los datos de las cuentas bancarias institucionales del negocio y un código QR estático oficial al finalizar la orden en el e-commerce. |
-| **RF-09** | Carga de Comprobante | Permitir al cliente capturar y adjuntar una imagen/fotografía de su recibo o comprobante de transferencia bancaria directo en la aplicación web. |
-| **RF-10** | Parámetros de Despacho | Permitir al comprador optar entre **"Envío a domicilio en Tarija"** (con opción de pago contra entrega en efectivo o QR al repartidor) o **"Retiro en tienda"** en la sucursal de calzado. |
-
-### 5.4 Gestión de inventario
-
-> ℹ️ **Alcance:** el **RF-13** (módulo de traspasos entre tiendas) queda fuera del alcance actual; se mantiene la numeración original del ERS. Ver [Escalabilidad futura](#12-escalabilidad-futura).
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-11** | Visibilidad de Stock | Mostrar en la base de datos y paneles internos el stock desglosado por modelo, talla y color de la sucursal de calzado. El modelo de datos se diseña por sucursal para permitir su ampliación futura. |
-| **RF-12** | Sincronización Automática | Restar de manera inmediata las unidades de calzado al efectuarse una venta directa en caja o al ser validado manualmente el comprobante de una compra por la web. |
-| **RF-14** | Notificación de Quiebre de Stock | Disparar alertas automáticas al Administrador cuando un modelo o talla caiga por debajo de un umbral mínimo de seguridad preestablecido. |
-
-### 5.5 Punto de venta (POS), comprobantes y entregas
-
-> ℹ️ **Alcance:** el proyecto no incluye facturación. Los requerimientos **RF-16** (factura electrónica simulada) y **RF-17** (datos fiscales NIT/CI y Razón Social) quedan fuera del alcance; se mantiene la numeración original del ERS.
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-15** | Terminal de Venta en Caja | Proveer a los empleados un módulo POS ágil para procesar ventas presenciales con pagos en efectivo o tarjeta a través de búsquedas por códigos o nombres de calzado. |
-| **RF-18** | Comprobante de Venta (no fiscal) | Generar e imprimir/exportar en PDF un comprobante simple de la venta, apto para pantallas y tiqueteras térmicas, con el detalle de la compra y los importes en Bs. No tiene validez como factura. |
-| **RF-19** | Cierre de Caja Diario | Permitir a cada empleado realizar el arqueo y balance de caja de la sucursal al término de cada jornada laboral. |
-| **RF-20** | Control de Entrega Local | Registrar la salida del pedido web hacia el servicio tercerizado de motomandados en Tarija, almacenando el nombre del repartidor y el estado del despacho. |
-
-### 5.6 Fidelización, analítica avanzada e inteligencia de negocio
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RF-21** | Programa de Fidelidad por Volumen | Contabilizar los pedidos exitosos vinculados al CI o celular del cliente. Al procesarse la décima (10.ª) compra confirmada, el sistema aplicará de manera automática un **5 % de descuento** sobre el importe neto de su siguiente pedido (tanto presencial como online). |
-| **RF-22** | Enlace a WhatsApp | Disponer de un botón interactivo para que el empleado envíe una plantilla de mensaje predefinido por WhatsApp al cliente notificándole la confirmación o el estado de retiro de su pedido. |
-| **RF-23** | Gráfico de Tendencia Estacional | Desplegar un gráfico de líneas para el Dueño que refleje los patrones de venta mensuales a lo largo del año académico/comercial, visibilizando picos estacionales de demanda (ej. época escolar, festividades). |
-| **RF-24** | Predicción de Abastecimiento | Generar recomendaciones sugeridas de compra analizando el histórico de ventas de la temporada anterior, proyectando las cantidades óptimas de calzado y tallas requeridas con un mes de antelación. |
-| **RF-25** | Dashboard de Retorno de Inversión | Presentar gráficos de barras comparativos entre el capital invertido en compras a proveedores frente al retorno y utilidades líquidas obtenidas por marca. |
-| **RF-26** | Reporte de Rotación de Inventario | Clasificar automáticamente los modelos de calzados en tres cuadrantes (Rotación Alta, Media y Baja), permitiendo identificar los productos estancados ("huesos") para planificar ofertas de liquidación. |
-| **RF-27** | Simulador Presupuestario Inteligente | Permitir al dueño simular la distribución de un presupuesto de inversión para nuevas adquisiciones de lotes, sugiriendo porcentajes de compra ideales (Niño, Juvenil, Adulto) fundamentados en el histórico de ventas reales. |
+**Regla de negocio de tallas (RF-06):** Niño del 20 al 34 · Juvenil del 35 al 39 · Adulto del 40 en adelante. Se valida en la tienda **y** en la base de datos.
 
 ---
 
-## 6. Requerimientos no funcionales (RNF)
+## 7. Requerimientos no funcionales (RNF) y su avance
 
-### 6.1 Rendimiento, disponibilidad y escalabilidad
-
-| ID | Nombre | Descripción |
+| ID | Tema | Estado |
 |---|---|---|
-| **RNF-01** | Disponibilidad del E-commerce | La interfaz pública web debe garantizar una operatividad continua del **99.5 %** del tiempo (24/7). |
-| **RNF-02** | Tiempos de Respuesta | Los módulos de catálogo del e-commerce deben procesar y cargar las consultas de calzados en un tiempo menor a **3 segundos** bajo redes móviles promedio en Tarija. |
-| **RNF-03** | Soporte de Concurrencia | El sistema debe tolerar un mínimo de **50 usuarios** navegando en simultáneo en la web sin mermar la velocidad de transacción de la caja física. |
-| **RNF-04** | Escalabilidad de Infraestructura | El diseño arquitectónico de la base de datos debe ser escalable, permitiendo la integración de nuevas sucursales físicas y nuevas líneas de producto sin alterar el código núcleo. |
+| RNF-01 | Disponibilidad 99,5 % | ⏳ Sprint 4 (HU-23, despliegue estable) |
+| RNF-02 | Catálogo en menos de 3 s en móvil | ✅ verificado en HU-05 |
+| RNF-03 | 50 usuarios concurrentes | 🔎 pendiente de prueba de carga |
+| RNF-04 | Escalabilidad (modelo de datos por sucursal) | ✅ tabla `sucursales` y stock por sucursal |
+| RNF-05 | Contraseñas con hash | ✅ Supabase Auth |
+| RNF-06 | HTTPS | ⏳ Sprint 4 (al desplegar) |
+| RNF-07 | Seguridad por roles (RLS) | ✅ Sprint 1–2; el empleado no ve márgenes ni paneles del Dueño |
+| RNF-08 | Mobile-first | ✅ tienda mobile-first; probada a 360 px |
+| RNF-09 | Venta en máximo 4 clics | ✅ **3 clics** (talla → Cobrar → Imprimir) |
+| RNF-10 | Español y Bs. | ✅ |
+| RNF-11 | Multi-navegador | 🔎 comprobar en la prueba final |
+| RNF-12 | Respaldos diarios a medianoche | ⏳ Sprint 4 (HU-23) |
+| RNF-13 | Caja congelada sin conexión | ✅ Sprint 3 (HU-24), con reintento idempotente |
+| RNF-14 | Compresión de imágenes | ✅ `browser-image-compression` (catálogo y comprobantes) |
+| RNF-15 | Modularidad | ✅ monorepo con dos apps desacopladas |
 
-### 6.2 Seguridad y control de privacidad
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RNF-05** | Cifrado de Credenciales | Encriptar todas las claves de acceso en el repositorio de datos mediante mecanismos de hash robustos (ej. algoritmos de la familia bcrypt). |
-| **RNF-06** | Canales Seguros | La navegación y flujo de datos dentro de la tienda virtual debe realizarse mandatoriamente sobre protocolos seguros HTTPS respaldados por certificados SSL válidos. |
-| **RNF-07** | Seguridad basada en Roles | Aplicar políticas estrictas de control de accesos; los empleados de la tienda física tendrán bloqueada por completo la visualización de los paneles de inversión, márgenes de ganancia y métricas gerenciales del dueño. |
-
-### 6.3 Usabilidad, interfaz y localización
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RNF-08** | Enfoque Mobile-First | La capa visual pública de la tienda virtual debe estar optimizada al 100 % para pantallas móviles, priorizando la facilidad de interacción táctil. |
-| **RNF-09** | Eficiencia en Caja | El diseño del flujo POS para los empleados debe permitir procesar e imprimir una venta presencial estándar en un máximo de **cuatro (4) clics**. |
-| **RNF-10** | Localización Idiomática y Cambiaria | Todo el sistema (módulos, alertas, reportes) operará nativamente en idioma español y procesará importes económicos exclusivamente en Bolivianos (Bs.). |
-
-### 6.4 Conectividad, código y respaldo
-
-| ID | Nombre | Descripción |
-|---|---|---|
-| **RNF-11** | Interoperabilidad Multi-navegador | Garantizar la compatibilidad visual y lógica de la plataforma en las últimas versiones estables de Google Chrome, Mozilla Firefox, Safari y Microsoft Edge. |
-| **RNF-12** | Copias de Seguridad Automatizadas | El sistema debe ejecutar respaldos cronometrados automáticos (backups) de toda la base de datos diariamente, de forma local o en la nube, a la medianoche. |
-| **RNF-13** | Tolerancia a Pérdida de Conexión | El sistema debe congelar la operación local e informar inmediatamente al cajero si se detecta una pérdida de conexión a internet, previniendo incoherencias en el inventario. |
-| **RNF-14** | Eficiencia en Consumo de Megas | El software debe comprimir automáticamente los archivos de imágenes de calzado subidos por el administrador para optimizar el gasto de datos móviles de los clientes en la ciudad de Tarija. |
-| **RNF-15** | Modularidad y Mantenibilidad | El código del sistema e-commerce debe estar lógicamente desacoplado del núcleo de inventario y caja interna, permitiendo efectuar actualizaciones técnicas independientes sin interrumpir el funcionamiento de la tienda física. |
+Accesibilidad añadida en la mejora visual (HU-UI-12): contraste de bordes ≥ 3:1, texto pequeño ≥ 4,5:1, foco visible y respeto de «reducir movimiento».
 
 ---
 
-## 7. Tecnologías
+## 8. Tecnologías
 
 | Capa | Tecnología |
 |---|---|
 | Frontend | React + Vite (dos aplicaciones: tienda pública y sistema interno) |
-| Backend / BaaS | Supabase (Auth, PostgreSQL, Storage, Realtime, Edge Functions) |
-| Base de datos | PostgreSQL con Row Level Security (RLS) |
-| Autenticación | Supabase Auth (hash de contraseñas gestionado por la plataforma, RNF-05) |
-| Gráficos | Recharts |
-| Compresión de imágenes | `browser-image-compression` (RNF-14) |
+| Backend / BaaS | Supabase (Auth, PostgreSQL, Storage, Realtime) |
+| Base de datos | PostgreSQL con Row Level Security (RLS); la lógica crítica (ventas, stock, fidelidad, cierres) vive en funciones SQL |
+| Autenticación | Supabase Auth |
+| Compresión de imágenes | `browser-image-compression` |
+| Gráficos | Recharts *(se incorpora en Sprint 4 con los paneles del Dueño)* |
+| Pruebas | `node --test` (unitarias) y scripts SQL con `ROLLBACK` |
+| Diseño | Sistema propio: tinta índigo + hueso + volt, tipografía Archivo expandida (`packages/shared/src/styles.css`) |
 
 ---
 
-## 8. Estructura del repositorio
+## 9. Estructura del repositorio
 
-Monorepo con dos aplicaciones desacopladas, en línea con el RNF-15.
+Monorepo con dos aplicaciones desacopladas (RNF-15).
 
 ```
 sneakers/
 ├── README.md
+├── CHANGELOG.md                 # Cambios por sprint (v0.2.0, v0.3.0, v0.3.1)
 ├── docs/
-│   ├── ERS.md                 # Especificación de requerimientos completa
-│   ├── diagramas/             # Casos de uso, clases, ER, secuencia
-│   └── manual-usuario/
+│   ├── sprint-3.md              # Historias del sprint, criterios, decisiones y guion de demo
+│   ├── hu-ui-sprint3.md         # Historias de mejora visual HU-UI-01 a 12
+│   └── Sneakers_HU_UI_Import.csv# Importación a Jira de las HU-UI
 ├── apps/
-│   ├── store/                 # E-commerce público (mobile-first)
-│   │   └── src/{pages,components,features,hooks}
-│   └── admin/                 # POS + paneles de empleado, dueño y administrador
-│       └── src/{pages,components,features,hooks}
+│   ├── store/                   # E-commerce público (mobile-first)
+│   │   └── src/{pages,components,features/{auth,cart,catalog,orders},lib}
+│   └── admin/                   # POS + paneles de empleado, dueño y administrador
+│       └── src/{pages,components,features/{auth,caja,alertas,pedidos},lib}
 ├── packages/
-│   └── shared/                # Cliente Supabase, tipos, utilidades (formato Bs., tallas)
+│   └── shared/                  # Cliente Supabase, roles, tallas, formato Bs., estados, caja, WhatsApp, estilos
+│       ├── src/
+│       └── test/shared.test.js
 ├── supabase/
-│   ├── migrations/            # Esquema SQL versionado
-│   ├── functions/             # Edge Functions
-│   └── seed.sql               # Datos ficticios de prueba
+│   ├── migrations/              # 0001 esquema · 0002 funciones · 0003 RLS · 0004 storage
+│   │                            # 0005 pedidos (S2) · 0006 caja y fidelidad (S3) · 0007 solo efectivo/QR
+│   ├── tests/                   # sprint2.test.sql, sprint3.test.sql
+│   ├── harness/stubs.sql        # Solo para PostgreSQL local sin Supabase
+│   ├── seed.sql                 # Datos ficticios de prueba
+│   └── README.md                # Orden de migraciones y puesta en marcha de la BD
 ├── .env.example
 ├── .gitignore
-└── package.json               # Workspaces
+└── package.json                 # Workspaces
 ```
 
-### Reparto de responsabilidades
-
-| Módulo | Requerimientos | Responsable |
-|---|---|---|
-| Base de datos, Auth, roles y RLS | RF-01 a RF-04, RNF-05 a RNF-07 | Romeo Lancelot Chavez Cuellar |
-| Tienda: catálogo, tallas y carrito | RF-05 a RF-07, RNF-08 | Pablo Cesar Maigua Ortiz |
-| Pedidos, comprobantes de pago, despacho y WhatsApp | RF-08 a RF-10, RF-20, RF-22 | Samuel Narciso Vilte Tarraga |
-| Inventario, POS y cierre de caja | RF-11, RF-12, RF-14, RF-15, RF-19, RNF-09, RNF-13 | Manuel Ignacio Aramayo Hoyos |
-| Comprobante de venta, fidelidad y analítica | RF-18, RF-21, RF-23 a RF-27 | Rodrigo Sebastián Guerrero Riera |
-
-### Flujo de trabajo con Git
-
-- Rama `main` protegida; ramas cortas por tarea con el ID del requerimiento, por ejemplo `feat/RF-05-catalogo`.
-- Pull request con al menos una revisión de otro integrante antes de mezclar.
-- Un issue por requerimiento en GitHub Projects.
-- Todo cambio en la base de datos se registra como migración en `supabase/migrations`.
+Pendiente de agregar al repositorio: `.github/workflows` (CI), diagramas (casos de uso, clases, ER) y manual de usuario.
 
 ---
 
-## 9. Instalación y ejecución
+## 10. Instalación y ejecución
 
 **Requisitos:** Node.js 20+, una cuenta de Supabase y (opcional) la CLI de Supabase.
 
@@ -308,38 +280,73 @@ npm install
 cp .env.example .env
 # Completar VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY
 
-# 4. Ejecutar las aplicaciones
-npm run dev --workspace apps/store    # Tienda pública
-npm run dev --workspace apps/admin    # Sistema interno
+# 4. Preparar la base de datos (ver supabase/README.md)
+#    Ejecutar en orden las migraciones 0001 a 0006 (y 0007 si la base ya corrió 0006 antes del cambio) y, opcionalmente, seed.sql
+
+# 5. Ejecutar las aplicaciones
+npm run dev:store     # Tienda pública
+npm run dev:admin     # Sistema interno
 ```
+
+Puesta en marcha mínima del negocio:
+
+1. Registrarse desde la tienda y convertirse en administrador con el `update` indicado en `supabase/README.md` (el rol nunca se elige en el registro).
+2. En el sistema interno: **Usuarios** (asignar rol de empleado y dueño) y **Datos de pago** (cuenta bancaria y QR; sin esto la tienda no deja finalizar pedidos).
+3. Configurar en la tabla `parametros` el nombre, dirección y teléfono que salen en el comprobante.
 
 > ⚠️ Nunca subir al repositorio la clave `service_role` de Supabase ni el archivo `.env`. En el frontend solo se usa la `anon key`.
 
 ---
 
-## 10. Hoja de ruta
+## 11. Pruebas
 
-- [x] Levantamiento y documentación de requerimientos (ERS)
-- [ ] Modelado (casos de uso, diagrama de clases, modelo entidad-relación)
-- [ ] Módulo de usuarios, roles y autenticación (RF-01 a RF-04)
-- [ ] Catálogo, tallas y carrito (RF-05 a RF-07)
-- [ ] Flujo de pedidos y pagos offline (RF-08 a RF-10)
-- [ ] Inventario de la sucursal de calzado (RF-11, RF-12, RF-14)
-- [ ] POS, comprobante de venta y entregas (RF-15, RF-18 a RF-20)
-- [ ] Fidelización y analítica (RF-21 a RF-27)
-- [ ] Pruebas, seguridad y despliegue
+```bash
+npm test                                                                      # 14 unitarias (Node)
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/sprint2.test.sql    # 56 comprobaciones SQL
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/sprint3.test.sql    # 88 comprobaciones SQL
+```
+
+Los scripts SQL terminan en `ROLLBACK`: no dejan datos. Ejecutarlos solo en una base de desarrollo.
 
 ---
 
-## 11. Uso académico
+## 12. Hoja de ruta por sprint
+
+- [x] Levantamiento y documentación de requerimientos (SRS)
+- [x] **Sprint 1 — Fundamentos** (v0.1.0): BD con roles y RLS (HU-01), registro/login/recuperación (HU-02), alta de modelos con stock y fotos comprimidas (HU-04), catálogo con filtros (HU-05), tallas válidas (HU-06), carrito (HU-07)
+- [x] **Sprint 2 — Pedidos y pago offline** (v0.2.0): acceso por rol (HU-03), pedido con envío o retiro (HU-08), cuentas y QR (HU-09), comprobante (HU-10), validación y descuento de stock (HU-11), repartidor y WhatsApp (HU-12), inventario (HU-13)
+- [x] **Sprint 3 — Caja, comprobantes y fidelidad** (v0.3.0): alertas de stock (HU-14), POS (HU-15), comprobante no fiscal (HU-16), cierre de caja (HU-17), fidelidad 5 % (HU-18), caja congelada sin internet (HU-24)
+- [x] **Mejora visual** (v0.3.1): HU-UI-01 a HU-UI-12 (identidad de marca, portada, tarjetas, ficha, accesibilidad, sistema interno)
+- [ ] **Sprint 4 — Analítica y salida a producción**: tendencia estacional (HU-19), retorno por marca (HU-20), rotación (HU-21), recomendaciones y simulador (HU-22), respaldos, HTTPS y despliegue (HU-23); compras a proveedor y costos (RF-28)
+- [ ] Modelado documentado (casos de uso, clases, ER), manual de usuario y CI
+- [ ] Pruebas finales: concurrencia (RNF-03), multi-navegador (RNF-11) y seguridad
+
+---
+
+## 13. Decisiones de diseño
+
+Para confirmar con el Dueño y el docente en la Sprint Review:
+
+1. **La compra se cuenta al confirmarse** (venta en caja o validación del comprobante web), no al entregar.
+2. **Fidelidad repetitiva:** cada 10 compras confirmadas, 5 % sobre el importe neto (sin envío) de la siguiente, una sola vez por ciclo. Anular una venta o cancelar un pedido devuelve el contador.
+3. **Caja solo con efectivo o QR.** La tarjeta se retiró; el QR solo se registra y el efectivo se arquea en el cierre.
+4. **Cierre de caja por empleado**, confirmado e inalterable; no hay fondo inicial de caja.
+5. **Anulación de ventas** solo antes del cierre y con motivo; repone stock y fidelidad. Nada se borra.
+6. **Impresión** con el diálogo del navegador (tiquetera de 80 mm o «Guardar como PDF»); el comprobante lleva «Documento no válido como factura».
+7. **Alertas de stock** en el panel interno; mínimo por defecto = 2 por modelo y talla.
+8. **Cierre de sesión por inactividad** del sistema interno a los 30 minutos.
+
+---
+
+## 14. Uso académico
 
 Este proyecto fue desarrollado con fines **académicos** en la Universidad Privada Domingo Sabio, aplicado al negocio Sneakers de la ciudad de Tarija.
 
 ---
 
-## 12. Escalabilidad futura
+## 15. Escalabilidad futura
 
-El sistema está diseñado para crecer más allá de la sucursal de calzado. El negocio cuenta con **otras dos sucursales de ropa en Tarija**, y la arquitectura permite integrarlas en una etapa posterior sin alterar el código núcleo (RNF-04 y RNF-15). La ampliación contemplaría:
+El negocio cuenta con **otras dos sucursales de ropa en Tarija**. El modelo de datos ya es por sucursal (RNF-04 y RNF-15), de modo que la ampliación contemplaría:
 
 - Stock segmentado por tienda (extensión del RF-11).
 - Módulo de traspasos entre sucursales (RF-13).
