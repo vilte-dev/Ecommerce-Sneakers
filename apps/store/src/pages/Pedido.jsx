@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { formatBs, mensajeError } from '@sneakers/shared';
 import { useCart } from '../features/cart/CartContext.jsx';
 import { useAuth } from '../features/auth/AuthContext.jsx';
-import { crearPedido, datosDePago } from '../features/orders/api.js';
+import { crearPedido, datosDePago, miFidelidad } from '../features/orders/api.js';
 
 // HU-08 · Confirmar el pedido con envío a domicilio en Tarija o retiro en tienda.
 export default function Pedido() {
@@ -17,16 +17,21 @@ export default function Pedido() {
   const [telefono, setTelefono] = useState(user?.user_metadata?.celular ?? '');
   const [pago, setPago] = useState('anticipado'); // anticipado | efectivo | qr
   const [envio, setEnvio] = useState(null);
+  const [fidelidad, setFidelidad] = useState(null);
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     datosDePago().then((d) => setEnvio(d.costoEnvio)).catch(() => setEnvio(0));
+    miFidelidad().then(setFidelidad).catch(() => {});
   }, []);
 
   const costoEnvio = metodo === 'domicilio' ? envio ?? 0 : 0;
   const fueraDeTarija = metodo === 'domicilio' && ciudad !== 'Tarija';
-  const totalFinal = useMemo(() => total + costoEnvio, [total, costoEnvio]);
+  // HU-18: el servidor aplica el descuento; aquí solo se muestra con el mismo redondeo (round a 2 decimales).
+  const pct = Number(fidelidad?.descuento_pct) || 0;
+  const descuento = useMemo(() => (pct > 0 ? Math.round(total * 100 * pct / 100) / 100 : 0), [total, pct]);
+  const totalFinal = useMemo(() => total - descuento + costoEnvio, [total, descuento, costoEnvio]);
 
   if (items.length === 0 && !creado.current) return <Navigate to="/carrito" replace />;
 
@@ -105,7 +110,7 @@ export default function Pedido() {
         ))}
         <hr style={{ border: 0, borderTop: '1px solid var(--linea)', width: '100%' }} />
         <div className="fila fila--entre"><span>Subtotal</span><span>{formatBs(total)}</span></div>
-        <div className="fila fila--entre"><span>Descuento por fidelidad</span><span>{formatBs(0)}</span></div>
+        <div className="fila fila--entre"><span>Descuento por fidelidad{pct > 0 ? ` (${pct} %)` : ''}</span><span>{descuento > 0 ? `−${formatBs(descuento)}` : formatBs(0)}</span></div>
         <div className="fila fila--entre"><span>Envío</span><span>{metodo === 'domicilio' ? formatBs(costoEnvio) : 'No aplica'}</span></div>
         <div className="fila fila--entre"><strong>Total a pagar</strong><span className="precio" style={{ fontSize: '1.6rem' }}>{formatBs(totalFinal)}</span></div>
       </section>

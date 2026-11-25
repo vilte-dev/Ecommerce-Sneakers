@@ -66,22 +66,32 @@ export default function Catalogo() {
 
   return (
     <div className="pila">
-      <h1 style={{ fontSize: '2rem' }}>Catálogo</h1>
-      <details open={window.innerWidth >= 900}>
-        <summary className="btn btn--chico" style={{ display: 'inline-flex' }}>Filtros</summary>
+      <div className="encabezado-pagina">
+        <div>
+          <p className="sobretitulo">Sneakers · Tarija</p>
+          <h1>Catálogo</h1>
+        </div>
+        <p className="tenue chico" style={{ margin: 0 }} role="status">
+          {estado === 'cargando' ? 'Buscando…' : `${total} modelo${total === 1 ? '' : 's'}`}
+        </p>
+      </div>
+      {/* HU-UI-05: atajos por rango de talla (mismo filtro «categoria» de la URL). */}
+      <div className="chips" role="group" aria-label="Rango de talla">
+        <button type="button" className="chip" aria-pressed={filtros.categoria === ''} onClick={() => cambiar('categoria', '')}>Todas</button>
+        {opciones.categorias.map((c) => (
+          <button key={c.id} type="button" className="chip" aria-pressed={filtros.categoria === String(c.id)} onClick={() => cambiar('categoria', String(c.id))}>
+            {c.nombre} · {c.talla_max == null ? `${c.talla_min}+` : `${c.talla_min}–${c.talla_max}`}
+          </button>
+        ))}
+      </div>
+      <details className="filtros-envoltura" open={window.innerWidth >= 900}>
+        <summary className="btn btn--chico" style={{ display: 'inline-flex' }}>Más filtros</summary>
         <div className="filtros">
           <div className="campo campo--ancho">
             <label htmlFor="q">Buscar por nombre</label>
             <input id="q" className="entrada" type="search" key={`q${filtros.q}`} defaultValue={filtros.q}
               onKeyDown={(e) => e.key === 'Enter' && cambiar('q', e.currentTarget.value.trim())}
               onBlur={(e) => cambiar('q', e.currentTarget.value.trim())} />
-          </div>
-          <div className="campo">
-            <label htmlFor="categoria">Categoría</label>
-            <select id="categoria" className="entrada" value={filtros.categoria} onChange={(e) => cambiar('categoria', e.target.value)}>
-              <option value="">Todas</option>
-              {opciones.categorias.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
           </div>
           <div className="campo">
             <label htmlFor="marca">Marca</label>
@@ -115,9 +125,6 @@ export default function Catalogo() {
         {hayFiltros && <button className="btn btn--chico" onClick={() => setParams({}, { replace: true })}>Quitar filtros</button>}
       </details>
 
-      <p className="tenue chico" role="status">
-        {estado === 'cargando' ? 'Buscando…' : `${total} modelo${total === 1 ? '' : 's'}`}
-      </p>
       {estado === 'error' && <p className="aviso aviso--error">No pudimos cargar el catálogo. Revisa tu conexión e inténtalo de nuevo.</p>}
       {estado === 'listo' && items.length === 0 && (
         <p className="aviso aviso--info">Ningún modelo coincide con esos filtros. Prueba quitando alguno.</p>

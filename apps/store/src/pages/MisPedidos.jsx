@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { estadoPedido, etiquetaDespacho, formatBs } from '@sneakers/shared';
-import { listarMisPedidos } from '../features/orders/api.js';
+import { listarMisPedidos, miFidelidad } from '../features/orders/api.js';
+import FidelidadBarra from '../components/FidelidadBarra.jsx';
 
 export default function MisPedidos() {
   const [pedidos, setPedidos] = useState(null);
   const [error, setError] = useState(false);
-  useEffect(() => { listarMisPedidos().then(setPedidos).catch(() => setError(true)); }, []);
+  const [fid, setFid] = useState(null);
+  useEffect(() => { listarMisPedidos().then(setPedidos).catch(() => setError(true)); miFidelidad().then(setFid).catch(() => {}); }, []);
 
   return (
     <div className="pila" style={{ maxWidth: 720 }}>
       <h1 style={{ fontSize: '2rem' }}>Mis pedidos</h1>
+      {fid && <FidelidadBarra fid={fid} />}
       {error && <p className="aviso aviso--error">No pudimos cargar tus pedidos. Inténtalo de nuevo.</p>}
       {!pedidos && !error && <div className="cargando" style={{ height: 120 }} aria-label="Cargando" />}
       {pedidos?.length === 0 && (

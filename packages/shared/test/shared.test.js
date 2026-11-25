@@ -48,3 +48,49 @@ test('mensajeError traduce errores y deja pasar los mensajes de negocio', () => 
   assert.equal(mensajeError({ message: 'x', code: '42501' }), 'No tienes permiso para realizar esta acción.');
   assert.match(mensajeError({ message: 'Failed to fetch' }), /Sin conexión/);
 });
+
+// ---- Sprint 3 ----------------------------------------------------------------------------------------------
+import { codigoModelo, coincideBusqueda, calcularTotales, agregarLinea, cambiarCantidadLinea, resultadoArqueo, hoyBolivia, crearMonitorConexion } from '../src/caja.js';
+
+test('POS: búsqueda por código o nombre, sin tildes ni mayúsculas (RF-15)', () => {
+  const m = { id: 12, marca: 'Volta', nombre: 'Runner Pro', color: 'Negro' };
+  assert.equal(codigoModelo(12), 'M0012');
+  for (const q of ['M0012', 'm0012', '12', 'runner', 'RUNNER pro', 'volta negro', '']) assert.equal(coincideBusqueda(m, q), true, q);
+  for (const q of ['M0013', '13', 'blanco', 'runner rojo']) assert.equal(coincideBusqueda(m, q), false, q);
+  assert.equal(coincideBusqueda({ id: 1, marca: 'Aurora', nombre: 'Niño Ágil', color: 'Azul' }, 'nino agil'), true);
+});
+test('POS: totales con descuento de fidelidad redondeados como la BD', () => {
+  assert.deepEqual(calcularTotales([{ precio: 50, cantidad: 1 }], 5), { subtotal: 50, descuento: 2.5, total: 47.5, unidades: 1 });
+  assert.deepEqual(calcularTotales([{ precio: 449.9, cantidad: 3 }], 0), { subtotal: 1349.7, descuento: 0, total: 1349.7, unidades: 3 });
+  assert.equal(calcularTotales([{ precio: 33.33, cantidad: 1 }], 5).descuento, 1.67);   // 1,6665 → 1,67
+  assert.equal(calcularTotales([], 5).total, 0);
+});
+test('POS: el carrito nunca supera el stock y quita la línea al llegar a 0', () => {
+  const base = { modeloId: 1, talla: 42, precio: 100, stock: 2 };
+  let c = agregarLinea([], base);
+  c = agregarLinea(c, base); c = agregarLinea(c, base);
+  assert.equal(c.length, 1); assert.equal(c[0].cantidad, 2);
+  assert.deepEqual(agregarLinea([], { ...base, stock: 0 }), []);
+  assert.equal(cambiarCantidadLinea(c, 1, 42, 9)[0].cantidad, 2);
+  assert.deepEqual(cambiarCantidadLinea(c, 1, 42, 0), []);
+});
+test('arqueo: cuadra, sobra o falta', () => {
+  assert.equal(resultadoArqueo(100, 100).texto, 'La caja cuadra');
+  assert.deepEqual([resultadoArqueo(105.5, 100).dif, resultadoArqueo(95, 100).dif], [5.5, -5]);
+  assert.equal(resultadoArqueo(95, 100).texto, 'Falta dinero');
+  assert.equal(resultadoArqueo(0.3, 0.1 + 0.2).texto, 'La caja cuadra');
+});
+test('hoyBolivia usa la hora de La Paz (UTC−4)', () => {
+  assert.equal(hoyBolivia(new Date('2026-11-25T02:30:00Z')), '2026-11-24');
+  assert.equal(hoyBolivia(new Date('2026-11-25T04:00:00Z')), '2026-11-25');
+});
+test('monitor de conexión: congela al primer fallo, avisa solo en cambios y reanuda al volver (RNF-13)', async () => {
+  let responde = true; const cambios = [];
+  const m = crearMonitorConexion({ ping: async () => { if (!responde) throw new Error('sin red'); }, alCambiar: (v) => cambios.push(v), setTimer: () => 0, clearTimer: () => {} });
+  await m.revisar(); assert.deepEqual(cambios, []);            // sigue en línea: no avisa
+  responde = false; await m.revisar(); await m.revisar();
+  assert.deepEqual(cambios, [false]); assert.equal(m.enLinea, false);
+  responde = true; await m.revisar();
+  assert.deepEqual(cambios, [false, true]);
+  m.reportar(false); m.reportar(false); assert.deepEqual(cambios, [false, true, false]);   // evento "offline" del navegador
+});

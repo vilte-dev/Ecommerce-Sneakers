@@ -90,6 +90,7 @@ export default function PedidoInterno() {
             <div key={d.id} className="fila fila--entre chico"><span>{d.cantidad} × {d.modelos?.marcas?.nombre} {d.modelos?.nombre} {d.modelos?.color} · T{d.talla}</span><span>{formatBs(d.cantidad * Number(d.precio_unitario))}</span></div>
           ))}
           <div className="fila fila--entre chico"><span>Subtotal</span><span>{formatBs(subtotal)}</span></div>
+          {Number(p.descuento) > 0 && <div className="fila fila--entre chico"><span>Descuento por fidelidad</span><span>−{formatBs(p.descuento)}</span></div>}
           {Number(p.costo_envio) > 0 && <div className="fila fila--entre chico"><span>Envío</span><span>{formatBs(p.costo_envio)}</span></div>}
           <div className="fila fila--entre"><strong>Total a cobrar</strong><strong className="precio">{formatBs(p.total)}</strong></div>
         </section>

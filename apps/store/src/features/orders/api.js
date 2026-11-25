@@ -27,6 +27,13 @@ export async function crearPedido({ items, metodo, direccion, telefono, contraEn
   return data;
 }
 
+/** HU-18 · avance del cliente hacia su descuento: { compras, cada, faltan, descuento_pct, porcentaje } (null si no hay perfil). */
+export async function miFidelidad() {
+  const { data, error } = await supabase.rpc('mi_fidelidad');
+  if (error) throw error;
+  return data;
+}
+
 export async function listarMisPedidos() {
   const { data, error } = await supabase
     .from('pedidos')

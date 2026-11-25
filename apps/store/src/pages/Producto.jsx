@@ -4,6 +4,7 @@ import { formatBs } from '@sneakers/shared';
 import { obtenerModelo } from '../features/catalog/api.js';
 import { useCart } from '../features/cart/CartContext.jsx';
 import SizeSelector from '../components/SizeSelector.jsx';
+import { IconoCheck } from '../components/Iconos.jsx';
 
 export default function Producto() {
   const { id } = useParams();
@@ -53,6 +54,12 @@ export default function Producto() {
   }
 
   return (
+    <>
+    <nav className="migas" aria-label="Ruta">
+      <Link to="/">Inicio</Link><span aria-hidden="true">/</span>
+      <Link to="/catalogo">Catálogo</Link><span aria-hidden="true">/</span>
+      <span aria-current="page">{modelo.marca} {modelo.nombre}</span>
+    </nav>
     <div className="ficha">
       <div>
         <div className="galeria__principal">
@@ -66,11 +73,11 @@ export default function Producto() {
           </div>
         )}
       </div>
-      <div className="pila">
+      <div className="pila ficha__info">
         <div>
-          <p className="tenue" style={{ margin: 0 }}>{modelo.marca} · {modelo.categoria}</p>
-          <h1 style={{ fontSize: '2rem' }}>{modelo.nombre} {modelo.color}</h1>
-          <p className="precio" style={{ fontSize: '1.6rem' }}>{formatBs(modelo.precio)}</p>
+          <p className="sobretitulo">{modelo.marca} · {modelo.categoria}</p>
+          <h1 className="ficha__titulo">{modelo.nombre} {modelo.color}</h1>
+          <p className="precio" style={{ fontSize: '1.7rem' }}>{formatBs(modelo.precio)}</p>
         </div>
         {sinStock ? (
           <p className="aviso aviso--info">Este modelo está agotado por ahora.</p>
@@ -78,18 +85,27 @@ export default function Producto() {
           <>
             <SizeSelector tallas={tallas} valor={talla} onChange={(t) => { setTalla(t); setMensaje(null); }}
               categoria={{ nombre: modelo.categoria, talla_min: modelo.talla_min, talla_max: modelo.talla_max }} />
-            {seleccion && seleccion.cantidad <= 3 && <p className="chico" style={{ color: 'var(--aji)', margin: 0 }}>Quedan {seleccion.cantidad} en esta talla.</p>}
-            <button className="btn btn--primario btn--bloque" disabled={!talla} onClick={alAgregar}>
-              {talla ? 'Agregar al carrito' : 'Elige una talla'}
-            </button>
+            {seleccion && seleccion.cantidad <= 3 && <p className="chico" style={{ color: '#b4330f', fontWeight: 600, margin: 0 }}>Quedan {seleccion.cantidad} en esta talla.</p>}
+            {/* HU-UI-06: en móvil esta barra queda fija abajo para tener el botón siempre a mano. */}
+            <div className="compra">
+              {mensaje && (
+                <div className={`aviso aviso--${mensaje.tipo}`} role="status">
+                  {mensaje.texto} {mensaje.tipo === 'ok' && <Link to="/carrito">Ir al carrito</Link>}
+                </div>
+              )}
+              <button className="btn btn--primario btn--bloque btn--grande" disabled={!talla} onClick={alAgregar}>
+                {talla ? `Agregar al carrito · ${formatBs(modelo.precio)}` : 'Elige una talla'}
+              </button>
+            </div>
           </>
         )}
-        {mensaje && (
-          <div className={`aviso aviso--${mensaje.tipo}`} role="status">
-            {mensaje.texto} {mensaje.tipo === 'ok' && <Link to="/carrito">Ir al carrito</Link>}
-          </div>
-        )}
+        <ul className="garantias" aria-label="Condiciones de compra">
+          <li><IconoCheck /> Retiro en tienda sin costo o envío a domicilio en Tarija</li>
+          <li><IconoCheck /> Pago por transferencia o QR con validación de comprobante</li>
+          <li><IconoCheck /> <span>Cambios y devoluciones: <Link to="/terminos">ver términos</Link></span></li>
+        </ul>
       </div>
     </div>
+    </>
   );
 }
